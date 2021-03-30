@@ -1,0 +1,53 @@
+
+name: sapiency
+description: The mobile application for Sapiency.io.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^4.3.3
+  intl: ^0.15.8
+  http: ^0.12.2
+  splashscreen: ^1.3.5
+  cupertino_icons: ^1.0.0
+  shared_preferences: ^0.5.12+4
+  jwt_decoder: ^1.0.4
+  decimal: ^0.3.5
+  flutter_slidable: ^0.5.7
+  flutter_chips_input: ^1.9.5
+  datetime_picker_formfield: ^1.0.0
+  url_launcher: ^6.0.3
+  pin_code_fields: ^7.0.0
+  intl_phone_number_input: ^0.6.0
+  flutter_launcher_icons: ^0.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: "^0.9.0"
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo.png"
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/images/oauth/
+  fonts:
+    - family: Axiforma
+      fonts:
+        - asset: assets/fonts/Axiforma-Regular.ttf
+        - asset: assets/fonts/Axiforma-Medium.ttf
+        - asset: assets/fonts/Axiforma-SemiBold.ttf
+          weight: 500
+        - asset: assets/fonts/Axiforma-Bold.ttf
+          weight: 700
+
