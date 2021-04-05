@@ -6,7 +6,8 @@ import 'package:sapiency/configs/theme.dart';
 import 'package:sapiency/providers/auth.dart';
 import 'package:sapiency/providers/influencer.dart';
 import 'package:sapiency/screens/auth/login.dart';
-import 'package:sapiency/screens/wallet/home.dart';
+import 'package:sapiency/screens/auth/pin.dart';
+import 'package:sapiency/screens/home/mainhome.dart';
 import 'package:sapiency/screens/splash.dart';
 import 'package:sapiency/screens/welcome.dart';
 
@@ -30,12 +31,13 @@ class SapiencyApp extends StatelessWidget {
         child: Consumer<AuthProvider>(
           builder: (ctx, authProvider, _) => MaterialApp(
             home: authProvider.isAuth
-                ? HomeScreen()
+                ? MainScreen()
                 : FutureBuilder(
                     future: authProvider.tryAutoLogin(),
                     builder: (ctx, authSnapshot) =>
                         authSnapshot.connectionState == ConnectionState.waiting
                         ? SplashScreen()
+                        // : PinScreen()
                         : WelcomeScreen()
                 ),
             title: Constants.APP_NAME,

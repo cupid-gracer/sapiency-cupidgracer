@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:sapiency/configs/images.dart';
 
 abstract class SignUpScreenTheme extends StatelessWidget {
 
   Image getHeaderImage() => Image.asset(
-    "assets/images/logo.png",
+    AppImages.logo,
     width: 50,
     height: 50,
   );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sapiency/configs/routes.dart';
 import 'package:sapiency/widgets/buttons/standard.dart';
 import 'package:sapiency/configs/theme.dart';
+import 'package:sapiency/configs/images.dart';
 
 class WelcomeScreen extends StatelessWidget {
   
@@ -15,7 +16,7 @@ class WelcomeScreen extends StatelessWidget {
         height: double.infinity,
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("assets/images/welcome-bg.png"),
+                image: AssetImage(AppImages.welcomeBG),
                 fit: BoxFit.cover)),
       ),
       Container(
@@ -48,6 +49,7 @@ class WelcomeScreen extends StatelessWidget {
                     child: Text("login"),
                     onPressed: (){
                       Navigator.of(context).pushNamed(Routes.LOGIN_ROUTE);
+                      
                     },
                   ),
                   // StandardButton(

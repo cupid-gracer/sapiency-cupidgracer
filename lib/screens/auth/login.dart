@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +22,8 @@ class LoginScreen extends SignUpScreenTheme {
   String getSubtitleText() => 'Lorem ipsum';
 
   @override
-  Widget getForm() => BaseForm(
+  Widget getForm() =>
+   BaseForm(
     submitText: 'Continue',
     fields: {
       'email': InputFormField(
@@ -34,8 +37,10 @@ class LoginScreen extends SignUpScreenTheme {
         showForgotPassword: true
       )
     },
-    onSubmit: (data, ctx) {
-        Provider.of<AuthProvider>(ctx, listen: false).loginByEmail(email: data['email'], password: data['password']);
+    onSubmit: (data, ctx) async {
+        bool f = await Provider.of<AuthProvider>(ctx, listen: false).loginByEmail(email: data['email'], password: data['password']);
+        if(f) Navigator.of(ctx).pushNamedAndRemoveUntil(Routes.MAIN_HOME_ROUTE, (route) => false);
+
     },
     onSubmitError: (error) {
       print(error);

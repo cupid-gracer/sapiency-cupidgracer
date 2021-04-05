@@ -6,15 +6,6 @@ import 'package:sapiency/mixins/box_decoration.dart';
 import 'package:sapiency/configs/routes.dart';
 
 class ConfirmPhoneScreen extends StatelessWidget with SapiencyInputDecoration {
-
-  // final String phone_number;
-  // ConfirmPhoneScreen({Key key, @required this.phone_number}) : super(key: key);
-//  ConfirmPhoneScreen({
-//     Key key,
-//     @required this.phone_number,
-//   }) : super(key: key);
-
-
   String s1 = "", s2 = "", s3 = "", s4 = "";
   Image getHeaderImage() => Image.asset(
         "assets/images/newsletter-dev.png",
@@ -27,100 +18,30 @@ class ConfirmPhoneScreen extends StatelessWidget with SapiencyInputDecoration {
   }
 
   String getSubtitleText(String phone) {
-  var tailPhone = phone.substring(phone.length - 3);
+    var tailPhone = phone.substring(phone.length - 3);
     return "We have sent you a confirmation code at number -----$tailPhone. Please paste here:";
   }
 
-  Widget getForm() {
-    // print("phone_number: ${this.phone_number}");
-
+  Widget getForm(node) {
     return Container(
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                flex: 1,
-                child: TextFormField(
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(1),
-                  ],
-                  decoration: standardInputDecoration(),
-                  style: new TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                      fontSize: 20),
-                  minLines: 1,
-                  maxLines: 1,
-                  onSaved: (value) => () {
-                    s1 = value;
-                  },
-                ),
-              ),
+              confirmInput(s1, node, 1),
               SizedBox(
                 width: 30,
               ),
-              Expanded(
-                flex: 1,
-                child: TextFormField(
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(1),
-                  ],
-                  decoration: standardInputDecoration(),
-                  style: new TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                      fontSize: 20),
-                  minLines: 1,
-                  maxLines: 1,
-                  onSaved: (value) => () {
-                    s2 = value;
-                  },
-                ),
-              ),
+              confirmInput(s2, node, 2),
               SizedBox(
                 width: 30,
               ),
-              Expanded(
-                flex: 1,
-                child: TextFormField(
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(1),
-                  ],
-                  decoration: standardInputDecoration(),
-                  style: new TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                      fontSize: 20),
-                  minLines: 1,
-                  maxLines: 1,
-                  onSaved: (value) => () {
-                    s3 = value;
-                  },
-                ),
-              ),
+              confirmInput(s3, node, 3),
               SizedBox(
                 width: 30,
               ),
-              Expanded(
-                flex: 1,
-                child: TextFormField(
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(1),
-                  ],
-                  decoration: standardInputDecoration(),
-                  style: new TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                      fontSize: 20),
-                  minLines: 1,
-                  maxLines: 1,
-                  onSaved: (value) => () {
-                    s4 = value;
-                  },
-                ),
-              ),
+              confirmInput(s4, node, 4),
             ],
           ),
         ],
@@ -132,6 +53,8 @@ class ConfirmPhoneScreen extends StatelessWidget with SapiencyInputDecoration {
   Widget build(BuildContext context) {
     final __deviceSize = MediaQuery.of(context).size;
     final __theme = Theme.of(context);
+    final node = FocusScope.of(context);
+    s1 = s2 = s3 = s4 = "";
 
     Map<String, String> map = ModalRoute.of(context).settings.arguments;
     String phone = map['phone_number'];
@@ -180,7 +103,7 @@ class ConfirmPhoneScreen extends StatelessWidget with SapiencyInputDecoration {
                         const SizedBox(
                           height: 40,
                         ),
-                        getForm(),
+                        getForm(node),
                         const SizedBox(
                           height: 40,
                         ),
@@ -191,9 +114,11 @@ class ConfirmPhoneScreen extends StatelessWidget with SapiencyInputDecoration {
                             color: SapiencyTheme.primaryColor,
                             child: Text("Confirm my number"),
                             onPressed: () {
+                              String str_confirm = s1 + s2 + s3 + s4;
+                              print("confirm phone code : $str_confirm");
+                              if (str_confirm.length == 4)
+                                Navigator.of(context).pushNamed(Routes.PIN_ROUTE);
                               // Provider.of<AuthProvider>(ctx, listen: false).signupByEmail(email: data['email'], password: data['password'], nickname: data['nickname'],);
-                              Navigator.of(context)
-                                  .pushNamed(Routes.LOGIN_ROUTE);
                             },
                           ),
                         ),
@@ -265,6 +190,55 @@ class ConfirmPhoneScreen extends StatelessWidget with SapiencyInputDecoration {
                 ],
               )),
         ));
+  }
+
+  Widget confirmInput(String s, node, int pos) {
+    TextEditingController txt = TextEditingController();
+    txt.selection = TextSelection.fromPosition(TextPosition(offset: -1));
+    // txt.text = " ";
+    return Expanded(
+      flex: 1,
+      child: TextFormField(
+        controller: txt,
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(2),
+        ],
+        textAlign: TextAlign.center,
+        decoration: standardConfirmInputDecoration(),
+        style: new TextStyle(
+            fontWeight: FontWeight.bold, color: Colors.red, fontSize: 40),
+        minLines: 1,
+        maxLines: 1,
+        showCursor: false,
+        onChanged: (v) {
+          if (v.length == 2) {
+            if (txt.value.selection.baseOffset == 1) {
+              txt.text = v.substring(0, 1);
+            } else {
+              txt.text = v.substring(v.length - 1);
+            }
+          }
+          switch (pos) {
+            case 1:
+              s1 = txt.text;
+              break;
+            case 2:
+              s2 = txt.text;
+              break;
+            case 3:
+              s3 = txt.text;
+              break;
+            case 4:
+              s4 = txt.text;
+              break;
+          }
+          pos == 4 ? null : node.nextFocus();
+        },
+        onSaved: (value) => () {
+          s = value;
+        },
+      ),
+    );
   }
 
   Widget _sectionTitle(String text) => Container(

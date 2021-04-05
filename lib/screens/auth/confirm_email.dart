@@ -21,94 +21,26 @@ class ConfirmEmailScreen extends StatelessWidget with SapiencyInputDecoration {
     return "Please type the code provided in the comfirmation email..";
   }
 
-  Widget getForm() {
+  Widget getForm(node) {
     return Container(
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                flex: 1,
-                child: TextFormField(
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(1),
-                  ],
-                  decoration: standardInputDecoration(),
-                  style: new TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                      fontSize: 20),
-                  minLines: 1,
-                  maxLines: 1,
-                  onSaved: (value) => () {
-                    s1 = value;
-                  },
-                ),
-              ),
+              confirmInput(s1, node, 1),
               SizedBox(
                 width: 30,
               ),
-              Expanded(
-                flex: 1,
-                child: TextFormField(
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(1),
-                  ],
-                  decoration: standardInputDecoration(),
-                  style: new TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                      fontSize: 20),
-                  minLines: 1,
-                  maxLines: 1,
-                  onSaved: (value) => () {
-                    s2 = value;
-                  },
-                ),
-              ),
+              confirmInput(s2, node, 2),
               SizedBox(
                 width: 30,
               ),
-              Expanded(
-                flex: 1,
-                child: TextFormField(
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(1),
-                  ],
-                  decoration: standardInputDecoration(),
-                  style: new TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                      fontSize: 20),
-                  minLines: 1,
-                  maxLines: 1,
-                  onSaved: (value) => () {
-                    s3 = value;
-                  },
-                ),
-              ),
+              confirmInput(s3, node, 3),
               SizedBox(
                 width: 30,
               ),
-              Expanded(
-                flex: 1,
-                child: TextFormField(
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(1),
-                  ],
-                  decoration: standardInputDecoration(),
-                  style: new TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                      fontSize: 20),
-                  minLines: 1,
-                  maxLines: 1,
-                  onSaved: (value) => () {
-                    s4 = value;
-                  },
-                ),
-              ),
+              confirmInput(s4, node, 4),
             ],
           ),
         ],
@@ -120,7 +52,8 @@ class ConfirmEmailScreen extends StatelessWidget with SapiencyInputDecoration {
   Widget build(BuildContext context) {
     final __deviceSize = MediaQuery.of(context).size;
     final __theme = Theme.of(context);
-
+    final node = FocusScope.of(context);
+    s1 = s2 = s3 = s4 = "";
     return Scaffold(
         backgroundColor: __theme.backgroundColor,
         appBar: AppBar(
@@ -133,16 +66,16 @@ class ConfirmEmailScreen extends StatelessWidget with SapiencyInputDecoration {
               margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
               child: Stack(
                 children: [
-                  Container(child: 
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      getHeaderImage(),
-                      const SizedBox(
-                        height: 25,
-                      ),
-                      Padding(
+                  Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        getHeaderImage(),
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        Padding(
                           padding: EdgeInsets.all(30),
                           child: Column(
                             children: [
@@ -162,57 +95,62 @@ class ConfirmEmailScreen extends StatelessWidget with SapiencyInputDecoration {
                             ],
                           ),
                         ),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      getForm(),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: RaisedButton(
-                          textColor: Colors.white,
-                          color: SapiencyTheme.primaryColor,
-                          child: Text("Continue"),
-                          onPressed: () {
-                            // Provider.of<AuthProvider>(ctx, listen: false).signupByEmail(email: data['email'], password: data['password'], nickname: data['nickname'],);
-                            Navigator.of(context)
-                                .pushNamed(Routes.INPUT_PHONE_ROUTE);
-                          },
+                        const SizedBox(
+                          height: 40,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "You don't recieve the code yet?",
-                            style: __theme.textTheme.subtitle1,
-                          ),
-                          RaisedButton(
-                            textColor: SapiencyTheme.primaryColor,
-                            color: Colors.white,
-                            child: Text("Resend"),
+                        getForm(node),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: RaisedButton(
+                            textColor: Colors.white,
+                            color: SapiencyTheme.primaryColor,
+                            child: Text("Continue"),
                             onPressed: () {
+                              String str_confirm = s1 + s2 + s3 + s4;
+                              print("confirm code : $str_confirm");
+                              if (str_confirm.length == 4)
+                                Navigator.of(context)
+                                    .pushNamed(Routes.INPUT_PHONE_ROUTE);
                               // Provider.of<AuthProvider>(ctx, listen: false).signupByEmail(email: data['email'], password: data['password'], nickname: data['nickname'],);
-                              // Navigator.of(context).pushNamed(Routes.CONFIRM_EMAIL);
                             },
                           ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 80,
-                      ),
-                    ],
-                  ),
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "You don't recieve the code yet?",
+                              style: __theme.textTheme.subtitle1,
+                            ),
+                            RaisedButton(
+                              textColor: SapiencyTheme.primaryColor,
+                              color: Colors.white,
+                              child: Text("Resend"),
+                              onPressed: () {
+                                // Provider.of<AuthProvider>(ctx, listen: false).signupByEmail(email: data['email'], password: data['password'], nickname: data['nickname'],);
+                                // Navigator.of(context).pushNamed(Routes.CONFIRM_EMAIL);
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 80,
+                        ),
+                      ],
+                    ),
                   ),
                   Container(
                     child: Column(
                       children: [
-                        SizedBox(height: __deviceSize.height - 250,),
+                        SizedBox(
+                          height: __deviceSize.height - 250,
+                        ),
                         // Expanded(child: Container()),
                         Container(
                           height: 70,
@@ -248,6 +186,55 @@ class ConfirmEmailScreen extends StatelessWidget with SapiencyInputDecoration {
                 ],
               )),
         ));
+  }
+
+  Widget confirmInput(String s, node, int pos) {
+    TextEditingController txt = TextEditingController();
+    txt.selection = TextSelection.fromPosition(TextPosition(offset: -1));
+    // txt.text = " ";
+    return Expanded(
+      flex: 1,
+      child: TextFormField(
+        controller: txt,
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(2),
+        ],
+        textAlign: TextAlign.center,
+        decoration: standardConfirmInputDecoration(),
+        style: new TextStyle(
+            fontWeight: FontWeight.bold, color: Colors.red, fontSize: 40),
+        minLines: 1,
+        maxLines: 1,
+        showCursor: false,
+        onChanged: (v) {
+          if (v.length == 2) {
+            if (txt.value.selection.baseOffset == 1) {
+              txt.text = v.substring(0, 1);
+            } else {
+              txt.text = v.substring(v.length - 1);
+            }
+          }
+          switch (pos) {
+            case 1:
+              s1 = txt.text;
+              break;
+            case 2:
+              s2 = txt.text;
+              break;
+            case 3:
+              s3 = txt.text;
+              break;
+            case 4:
+              s4 = txt.text;
+              break;
+          }
+          pos == 4 ? null : node.nextFocus();
+        },
+        onSaved: (value) => () {
+          s = value;
+        },
+      ),
+    );
   }
 
   Widget _sectionTitle(String text) => Container(

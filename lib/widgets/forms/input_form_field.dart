@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sapiency/mixins/input_decoration.dart';
 import 'package:sapiency/configs/validators.dart';
+import 'package:sapiency/configs/images.dart';
 
 class InputFormField extends StatelessWidget with SapiencyInputDecoration {
   final String name;
@@ -8,6 +9,7 @@ class InputFormField extends StatelessWidget with SapiencyInputDecoration {
   final String placeholder;
   final String comment;
   final String value;
+  final Widget suffix;
   final bool required;
   final int lines;
   final TextInputType keyboardType;
@@ -17,6 +19,7 @@ class InputFormField extends StatelessWidget with SapiencyInputDecoration {
   final Map<String, String> saveTo;
   final FocusNode focusNode;
   final Function focusNext;
+  final Function onPressedSuffix;
 
   InputFormField({
     this.name,
@@ -24,6 +27,7 @@ class InputFormField extends StatelessWidget with SapiencyInputDecoration {
     this.placeholder,
     this.comment = '',
     this.value = '',
+    this.suffix,
     this.required = true,
     this.lines = 1,
     this.validator = Validator.empty,
@@ -32,21 +36,25 @@ class InputFormField extends StatelessWidget with SapiencyInputDecoration {
     this.focusNode,
     this.focusNext,
     this.keyboardType = TextInputType.text,
-    this.inputAction = TextInputAction.next
+    this.inputAction = TextInputAction.next,
+    this.onPressedSuffix 
   });
 
   factory InputFormField.formField(
       InputFormField previous, {
         String name,
         String value,
+        Widget suffix,
         Map<String, String> saveTo,
         TextInputAction inputAction,
         FocusNode focusNode,
-        Function focusNext
+        Function focusNext,
+        Function onPressedSuffix
       }) =>
     InputFormField(
       name: name,
       value: value,
+      suffix: previous.suffix,
       label: previous.label,
       comment: previous.comment,
       placeholder: previous.placeholder,
@@ -58,13 +66,14 @@ class InputFormField extends StatelessWidget with SapiencyInputDecoration {
       inputAction: inputAction,
       focusNode: focusNode,
       focusNext: focusNext,
+      onPressedSuffix: previous.onPressedSuffix,
     );
 
 
   @override
   Widget build(BuildContext context) {
     final __theme = Theme.of(context);
-
+    print("onPressedSuffix:  $onPressedSuffix");
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +98,7 @@ class InputFormField extends StatelessWidget with SapiencyInputDecoration {
         ),
         TextFormField(
           initialValue: value,
-          decoration: standardInputDecoration(placeholder: placeholder),
+          decoration: standardInputDecoration(placeholder: placeholder, suffix: suffix, onPressedSuffix: onPressedSuffix),
           validator: (value) => Validator.ifRequired(required, value, validator),
           minLines: lines,
           maxLines: lines,

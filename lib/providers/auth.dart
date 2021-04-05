@@ -16,11 +16,10 @@ class AuthProvider with ChangeNotifier {
   get token => _storage["token"] as String;
   get user => _storage["user"] as User;
   get isAuth => token != null;
-  // get token => "efe" as String;
-  // get user => User();
-  // get isAuth => true;
 
-  Future<void> loginByEmail({String email, String password}) async {
+
+
+  Future<bool> loginByEmail({String email, String password}) async {
     final __tokenResponse = await HttpService(Api.API_USER_LOGIN)
       .body({'type': 'EMAIL', 'email': email, 'password': password})
       .execute();
@@ -28,7 +27,10 @@ class AuthProvider with ChangeNotifier {
 
     if ((__tokenResponse['token'] as String).isNotEmpty) {
       await afterLogin(__tokenResponse['token']);
+      if(isAuth) return true;
     }
+
+    return false;
   }
 
     Future<void> signupByEmail({String email, String password, String nickname}) async {
@@ -57,6 +59,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   void logout() {
+    print("logout");
     _storage["token"] = null;
     _cancelAuthTimer();
     _clearAuthPreferences();
@@ -74,6 +77,7 @@ class AuthProvider with ChangeNotifier {
       user: User.fromJson(__response)
     );
 
+    print("isAuth : $isAuth"); 
     _autoLogout();
     notifyListeners();
 
@@ -82,8 +86,10 @@ class AuthProvider with ChangeNotifier {
 
 
   void _autoLogout() {
+  print("there============ ${ (JwtDecoder.getExpirationDate(token).difference(DateTime.now())).inSeconds}");
+
     _cancelAuthTimer();
-    _authTimer = Timer(Duration(seconds: JwtDecoder.getExpirationDate(token).second), logout);
+    _authTimer = Timer(Duration(seconds: (JwtDecoder.getExpirationDate(token).difference(DateTime.now())).inSeconds), logout);
   }
 
   void _cancelAuthTimer() {

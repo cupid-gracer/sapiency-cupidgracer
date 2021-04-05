@@ -8,6 +8,7 @@ import 'package:sapiency/providers/auth.dart';
 import 'package:sapiency/configs/theme.dart';
 import 'package:sapiency/configs/routes.dart';
 import 'package:sapiency/configs/validators.dart';
+import 'package:sapiency/configs/images.dart';
 import 'package:sapiency/themes/sign_up_theme.dart';
 import 'package:sapiency/widgets/buttons/standard.dart';
 import 'package:sapiency/widgets/buttons/submit.dart';
@@ -96,7 +97,7 @@ class SignupScreen extends SignUpScreenTheme {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Image.asset(
-                    "assets/images/privacy.png",
+                    AppImages.privacy,
                     width: 50,
                     height: 50,
                   ),
