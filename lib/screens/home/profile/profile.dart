@@ -75,11 +75,11 @@ class ProfileScreen extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            // ProfileHomeWidget(),
+            ProfileHomeWidget(),
             Icon(Icons.home),
-            Icon(Icons.sentiment_satisfied_outlined),
-            Icon(Icons.shopping_cart_outlined),
-            // ProfileHolersWidget(),
+            // Icon(Icons.sentiment_satisfied_outlined),
+            // Icon(Icons.shopping_cart_outlined),
+            ProfileHolersWidget(),
           ],
         ),
       // ),

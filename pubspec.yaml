@@ -29,6 +29,7 @@ dependencies:
   convex_bottom_bar: ^3.0.0
   percent_indicator: ^3.0.1
   flutter_icons: ^1.1.0
+  material_design_icons_flutter: 4.0.5955
   
 dev_dependencies:
   flutter_test:
