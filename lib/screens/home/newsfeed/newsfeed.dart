@@ -60,7 +60,7 @@ class NewsFeedScreen extends StatelessWidget {
                           recognizer: new TapGestureRecognizer()
                             ..onTap = () {
                               launch(
-                                  'https://docs.flutter.io/flutter/services/UrlLauncher-class.html');
+                                  'https://static.coindesk.com/wp-content/uploads/2019/03/trading-chart-710x458.jpg');
                             },
                         ),
                       ],

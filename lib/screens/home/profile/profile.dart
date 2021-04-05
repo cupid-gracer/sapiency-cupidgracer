@@ -9,7 +9,8 @@ import 'package:sapiency/configs/images.dart';
 import 'package:sapiency/models/user.dart';
 import 'package:sapiency/providers/auth.dart';
 import 'package:sapiency/widgets/app_drawer.dart';
-import 'package:sapiency/widgets/bottom_navigator.dart';
+import 'package:sapiency/screens/home/profile/home.dart';
+import 'package:sapiency/screens/home/profile/holders.dart';
 
 class ProfileScreen extends StatelessWidget {
   ThemeData __sapiencyTheme;
@@ -17,7 +18,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<AuthProvider>(context, listen: false).user;
-    __sapiencyTheme = SapiencyTheme.getTheme(context);
+    __sapiencyTheme = SapiencyTheme.getTheme(context);  
 
     return Scaffold(
       backgroundColor: __sapiencyTheme.backgroundColor,
@@ -44,7 +45,7 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _myInfo() {
     return Padding(
-      padding: EdgeInsets.only(left: 20, right:20, top:10),
+      padding: EdgeInsets.only(left: 10, right:10, top:10),
       child: Column(
         children: [
           _myListTile(),
@@ -74,9 +75,11 @@ class ProfileScreen extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            Icon(Icons.directions_car),
-            Icon(Icons.directions_transit),
-            Icon(Icons.directions_bike),
+            // ProfileHomeWidget(),
+            Icon(Icons.home),
+            Icon(Icons.sentiment_satisfied_outlined),
+            Icon(Icons.shopping_cart_outlined),
+            // ProfileHolersWidget(),
           ],
         ),
       // ),
@@ -90,8 +93,8 @@ class ProfileScreen extends StatelessWidget {
           // backgroundColor: SapiencyTheme.primaryColor,
           child: Image(
             image: AssetImage(AppImages.man1),
-            height: 100,
-            width: 100,
+            height: 70,
+            width: 70,
             fit: BoxFit.fill,
           ),
           // foregroundColor: Colors.white,
@@ -105,7 +108,7 @@ class ProfileScreen extends StatelessWidget {
             Row(children: [
               Text(
                 "John Doe",
-                style: TextStyle(fontSize: 25),
+                style: TextStyle(fontSize: 20),
               ),
               SizedBox(
                 width: 20,
@@ -118,7 +121,7 @@ class ProfileScreen extends StatelessWidget {
             Text(
               "JDOE",
               style: TextStyle(
-                fontWeight: FontWeight.bold,
+                // fontWeight: FontWeight.bold,
                 color: SapiencyTheme.primaryColor,
               ),
             ),
@@ -135,10 +138,10 @@ class ProfileScreen extends StatelessWidget {
         Expanded(
             child: ListTile(
           title: Container(
-            height: 40,
+            height: 33,
             child: Text(
               "\$523K",
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),
             ),
           ),
           subtitle: Text("Market Cap"),
@@ -146,13 +149,13 @@ class ProfileScreen extends StatelessWidget {
         Expanded(
             child: ListTile(
           title: Container(
-              height: 40,
+              height: 33,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "\$0.025",
-                    style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     width: 10,
@@ -165,10 +168,10 @@ class ProfileScreen extends StatelessWidget {
         Expanded(
             child: ListTile(
           title: Container(
-            height: 40,
+            height: 33,
             child: Text(
               "\$523K",
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),
             ),
           ),
           subtitle: Text("Volume"),
@@ -186,15 +189,15 @@ class ProfileScreen extends StatelessWidget {
           Icon(
             isUp ? AntDesign.caretup : AntDesign.caretdown,
             color: myColor,
-            size: 12,
+            size: 8,
           ),
-          Text("% $value", style: TextStyle(fontSize: 15, color: myColor))
+          Text("% $value", style: TextStyle(fontSize: 10, color: myColor))
         ]);
   }
 
   Widget _myDetail() {
     return Padding(
-        padding: EdgeInsets.all(18),
+        padding: EdgeInsets.only(left:18, right:18, top:10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -207,7 +210,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             Wrap(
               direction: Axis.horizontal,
-              runSpacing: 5.0,
+              // runSpacing: 5.0,
               spacing: 5.0,
               children: [
                 _chipText("Influnecer"),
@@ -215,7 +218,7 @@ class ProfileScreen extends StatelessWidget {
                 _chipText("Creator"),
               ],
             ),
-            SizedBox(height: 50),
+            SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -242,6 +245,8 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
+            SizedBox(height: 10),
+          
           ],
         ));
   }

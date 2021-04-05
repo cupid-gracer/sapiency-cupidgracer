@@ -63,7 +63,7 @@ class SendScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(
-                    height: 50,
+                    height: 20,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -118,7 +118,7 @@ class SendScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: 100,
+              width: 70,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -130,21 +130,21 @@ class SendScreen extends StatelessWidget {
               child: Image(image: AssetImage(imgURL), fit: BoxFit.cover),
             ),
             SizedBox(
-              height: 15,
+              height: 10,
             ),
             Text(name,
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: 20,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold)),
             SizedBox(
-              height: 15,
+              height: 8,
             ),
-            Text(volume, style: TextStyle(color: Colors.white, fontSize: 18)),
+            Text(volume, style: TextStyle(color: Colors.white, fontSize: 15)),
             SizedBox(
-              height: 5,
+              height: 3,
             ),
-            Text(exchange, style: TextStyle(color: Colors.white, fontSize: 15)),
+            Text(exchange, style: TextStyle(color: Colors.white, fontSize: 12)),
           ],
         ),
       );

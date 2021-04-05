@@ -9,7 +9,7 @@ import 'package:sapiency/screens/auth/reset_password.dart';
 import 'package:sapiency/screens/auth/reset_password_confirm.dart';
 import 'package:sapiency/screens/auth/signup.dart';
 import 'package:sapiency/screens/influencer/become_influencer.dart';
-import 'package:sapiency/screens/home/profile.dart';
+import 'package:sapiency/screens/home/profile/profile.dart';
 import 'package:sapiency/screens/home/mainhome.dart';
 import 'package:sapiency/screens/home/wallet/wallet.dart';
 import 'package:sapiency/screens/home/wallet/send.dart';

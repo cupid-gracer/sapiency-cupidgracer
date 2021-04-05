@@ -6,7 +6,7 @@ import 'package:sapiency/models/user.dart';
 import 'package:sapiency/screens/home/home.dart';
 import 'package:sapiency/screens/home/search.dart';
 import 'package:sapiency/screens/home/wallet/wallet.dart';
-import 'package:sapiency/screens/home/profile.dart';
+import 'package:sapiency/screens/home/profile/profile.dart';
 import 'package:sapiency/providers/auth.dart';
 import 'package:sapiency/widgets/bottom_navigator.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';

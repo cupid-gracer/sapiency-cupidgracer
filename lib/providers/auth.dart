@@ -18,19 +18,24 @@ class AuthProvider with ChangeNotifier {
   get isAuth => token != null;
 
 
+  // Future<bool> loginByEmail({String email, String password}) async {
+  //   final __tokenResponse = await HttpService(Api.API_USER_LOGIN)
+  //     .body({'type': 'EMAIL', 'email': email, 'password': password})
+  //     .execute();
+  //   print("here");
+
+  //   if ((__tokenResponse['token'] as String).isNotEmpty) {
+  //     await afterLogin(__tokenResponse['token']);
+  //     if(isAuth) return true;
+  //   }
+
+  //   return false;
+  // }
 
   Future<bool> loginByEmail({String email, String password}) async {
-    final __tokenResponse = await HttpService(Api.API_USER_LOGIN)
-      .body({'type': 'EMAIL', 'email': email, 'password': password})
-      .execute();
-    print("here");
 
-    if ((__tokenResponse['token'] as String).isNotEmpty) {
-      await afterLogin(__tokenResponse['token']);
-      if(isAuth) return true;
-    }
-
-    return false;
+    await afterLogin("efef");
+    return true;
   }
 
     Future<void> signupByEmail({String email, String password, String nickname}) async {
@@ -67,11 +72,28 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> afterLogin(String token) async {
-    _storage['token'] = token;
+  // Future<void> afterLogin(String token) async {
+  //   _storage['token'] = token;
 
-    final __response = await AuthHttpService(Api.API_USER_GET, this)
-        .execute();
+  //   final __response = await AuthHttpService(Api.API_USER_GET, this)
+  //       .execute();
+  //   _setStorage(
+  //     token: token,
+  //     user: User.fromJson(__response)
+  //   );
+
+  //   print("isAuth : $isAuth"); 
+  //   _autoLogout();
+  //   notifyListeners();
+
+  //   await _saveAuthPreferences();
+  // }
+  // 
+    Future<void> afterLogin(String token) async {
+    _storage['token'] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTMwLCJ1c2VybmFtZSI6ImN1cGlkZ3JhY2VyIiwiZXhwIjoxNjE4NDUwNTc1LCJpYXQiOjE2MTc1ODY1NzV9.UbF26P9AGLLbjg26ObSlqrBpoaMhoFqo4EUxTUyDb2w";
+
+      print("efefefefeeeeeeeeeeeeeeeeee");
+    final __response =json.decode("{\"result\":\"success\",\"nickname\":\"cupidgracer\",\"email\":\"cupidgracer@gmail.com\",\"phone\":\"1234567890\",\"wallets\":[{\"currency\":\"ETH\",\"value\":\"45.5\",\"lockedvalue\":\"2.5\",\"address\":\"0x123784568fwefafnwlenf\"},{\"currency\":\"BTC\",\"value\":\"12.5\",\"lockedvalue\":\"2.5\",\"address\":\"0x123784568fwefafnwlenf\"},{\"currency\":\"LTC\",\"value\":\"63.1\",\"lockedvalue\":\"2.5\",\"address\":\"0x123784568fwefafnwlenf\"},{\"currency\":\"USDT\",\"value\":\"453\",\"lockedvalue\":\"2.5\",\"address\":\"0x123784568fwefafnwlenf\"},{\"currency\":\"USDC\",\"value\":\"127\",\"lockedvalue\":\"2.5\",\"address\":\"0x123784568fwefafnwlenf\"},{\"currency\":\"BNB\",\"value\":\"783\",\"lockedvalue\":\"2.5\",\"address\":\"0x123784568fwefafnwlenf\"},{\"currency\":\"EFS\",\"value\":\"453\",\"lockedvalue\":\"2.5\",\"address\":\"0x123784568fwefafnwlenf\"},{\"currency\":\"ETH\",\"value\":\"7245\",\"lockedvalue\":\"2.5\",\"address\":\"0x123784568fwefafnwlenf\"},{\"currency\":\"ADC\",\"value\":\"787\",\"lockedvalue\":\"2.5\",\"address\":\"0x123784568fwefafnwlenf\"},{\"currency\":\"AAF\",\"value\":\"778\",\"lockedvalue\":\"2.5\",\"address\":\"0x123784568fwefafnwlenf\"},{\"currency\":\"ACA\",\"value\":\"453\",\"lockedvalue\":\"2.5\",\"address\":\"123456-654321-789654\"}]}");
     _setStorage(
       token: token,
       user: User.fromJson(__response)
@@ -86,10 +108,9 @@ class AuthProvider with ChangeNotifier {
 
 
   void _autoLogout() {
-  print("there============ ${ (JwtDecoder.getExpirationDate(token).difference(DateTime.now())).inSeconds}");
-
     _cancelAuthTimer();
-    _authTimer = Timer(Duration(seconds: (JwtDecoder.getExpirationDate(token).difference(DateTime.now())).inSeconds), logout);
+    // _authTimer = Timer(Duration(seconds: (JwtDecoder.getExpirationDate(token).difference(DateTime.now())).inSeconds), logout);
+    _authTimer = Timer(Duration(seconds: 3600), logout);
   }
 
   void _cancelAuthTimer() {

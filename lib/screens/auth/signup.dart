@@ -132,7 +132,7 @@ class SignupScreen extends SignUpScreenTheme {
                           recognizer: new TapGestureRecognizer()
                             ..onTap = () {
                               launch(
-                                  'https://docs.flutter.io/flutter/services/UrlLauncher-class.html');
+                                  'https://www.google.com');
                             },
                         ),
                       ],
@@ -155,7 +155,7 @@ class SignupScreen extends SignUpScreenTheme {
                           recognizer: new TapGestureRecognizer()
                             ..onTap = () {
                               launch(
-                                  'https://docs.flutter.io/flutter/services/UrlLauncher-class.html');
+                                  'https://www.google.com');
                             },
                         ),
                       ],
