@@ -30,9 +30,7 @@ class PinScreen extends StatefulWidget {
 }
 
 class _PinScreenState extends State<PinScreen>
-    // with SingleTickerProviderStateMixin
-    with
-        ScreenLoader<PinScreen> {
+    with SingleTickerProviderStateMixin, ScreenLoader<PinScreen> {
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   Map<String, dynamic> _deviceData = <String, dynamic>{};
 
@@ -43,12 +41,12 @@ class _PinScreenState extends State<PinScreen>
   String enteredPIN = '';
   int PIN_length = 4;
   User user;
-
+  String email;
   @override
   initState() {
     super.initState();
-    user = Provider.of<AuthProvider>(context, listen: false).user;
-
+    if (widget.type)
+      user = Provider.of<AuthProvider>(context, listen: false).user;
     enteredPIN = "";
 
     circleUIConfig = CircleUIConfig(
@@ -63,29 +61,29 @@ class _PinScreenState extends State<PinScreen>
       // keyboardSize:Size(500,400)
     );
 
-    // controller = AnimationController(
-    //     duration: const Duration(milliseconds: 500), vsync: this);
-    // final Animation curve =
-    //     CurvedAnimation(parent: controller, curve: ShakeCurve());
-    // animation = Tween(begin: 0.0, end: 10.0).animate(curve as Animation<double>)
-    //   ..addStatusListener((status) {
-    //     if (status == AnimationStatus.completed) {
-    //       setState(() {
-    //         enteredPIN = '';
-    //         controller.value = 0;
-    //       });
-    //     }
-    //   })
-    //   ..addListener(() {
-    //     setState(() {
-    //       // the animation object’s value is the changed state
-    //     });
-    //   });
+    controller = AnimationController(
+        duration: const Duration(milliseconds: 500), vsync: this);
+    final Animation curve =
+        CurvedAnimation(parent: controller, curve: ShakeCurve());
+    animation = Tween(begin: 0.0, end: 10.0).animate(curve as Animation<double>)
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            enteredPIN = '';
+            controller.value = 0;
+          });
+        }
+      })
+      ..addListener(() {
+        setState(() {
+          // the animation object’s value is the changed state
+        });
+      });
   }
 
   @override
   loader() {
-    return  CircularProgressIndicator(backgroundColor: Colors.white);
+    return CircularProgressIndicator(backgroundColor: Colors.white);
     // return AlertDialog(
     //   title: Text('Wait.. Loading data..'),
     // );
@@ -120,6 +118,11 @@ class _PinScreenState extends State<PinScreen>
 
   @override
   Widget screen(BuildContext context) {
+    if (!widget.type) {
+      Map<String, String> map = ModalRoute.of(context).settings.arguments;
+      email = map['email'];
+    }
+
     return Stack(
       children: [
         Container(
@@ -180,7 +183,7 @@ class _PinScreenState extends State<PinScreen>
   List<Widget> _buildCircles() {
     var list = <Widget>[];
     var config = circleUIConfig;
-    // var extraSize = animation.value;
+    var extraSize = animation.value;
     for (int i = 0; i < PIN_length; i++) {
       list.add(Expanded(
           child: i < enteredPIN.length
@@ -196,7 +199,7 @@ class _PinScreenState extends State<PinScreen>
                   // filled: i < enteredPIN.length,
                   filled: true,
                   circleUIConfig: config,
-                  // extraSize: extraSize,
+                  extraSize: extraSize,
                 )));
     }
     return list;
@@ -240,20 +243,26 @@ class _PinScreenState extends State<PinScreen>
       // enteredPIN = "";
       String device_id = await getDeviceId();
       if (widget.type) {
-        await this.performFuture(() =>
-            Provider.of<AuthProvider>(context, listen: false).loginByPin(
-                context: context,
-                email: user.email,
-                deviceId: device_id,
-                pin: str));
+        bool f = false;
+        await this.performFuture(() async {
+          f = await Provider.of<AuthProvider>(context, listen: false)
+              .loginByPin(
+                  context: context,
+                  email: user.email,
+                  deviceId: device_id,
+                  pin: str);
+        });
+        if(!f){
+          controller.forward();
+        }
       } else {
-        Navigator.of(context)
-            .pushNamed(Routes.CONFIRM_PIN_ROUTE, arguments: {"pincode": str});
+        print("email: $email");
+        Navigator.of(context).pushNamed(Routes.CONFIRM_PIN_ROUTE,
+            arguments: {"email": email, "pincode": str});
       }
       // widget.passwordEnteredCallback(enteredPIN);
     }
   }
-
 
   _onDeleteCancelButtonPressed() {
     if (enteredPIN.length > 0) {

@@ -45,7 +45,7 @@ class Routes {
     LOGIN_ROUTE:                  (ctx) => LoginScreen(),
     INPUT_PHONE_ROUTE:            (ctx) => InputPhoneScreen(),
     NEWSFEED_ROUTE:               (ctx) => NewsFeedScreen(),
-    PIN_ROUTE:                    (ctx) => PinScreen(),
+    PIN_ROUTE:                    (ctx) => PinScreen(type: false),
     PROFILE_ROUTE:                (ctx) => ProfileScreen(),
     RESET_PASSWORD_ROUTE:         (ctx) => ResetPasswordScreen(),
     RESET_PASSWORD_CONFIRM_ROUTE: (ctx) => ResetPasswordConfirmScreen(),

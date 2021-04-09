@@ -60,6 +60,12 @@ class _confirmEmailScreenState extends State<ConfirmEmailScreen> with SapiencyIn
   }
 
   @override
+  initState(){
+    super.initState();
+    s1 = s2 = s3 = s4 = "";
+  }
+
+  @override
   Widget build(BuildContext context) {
     final __deviceSize = MediaQuery.of(context).size;
     final __theme = Theme.of(context);
@@ -68,7 +74,6 @@ class _confirmEmailScreenState extends State<ConfirmEmailScreen> with SapiencyIn
     String email = map1['email'];
     String nickname = map1['nickname'];
 
-    s1 = s2 = s3 = s4 = "";
     return Scaffold(
         backgroundColor: __theme.backgroundColor,
         appBar: AppBar(
@@ -141,7 +146,7 @@ class _confirmEmailScreenState extends State<ConfirmEmailScreen> with SapiencyIn
                                 if(f)
                                 Navigator.of(context)
                                     .pushNamed(Routes.INPUT_PHONE_ROUTE,arguments: {"email": email,"nickname": nickname});
-                                setState((){isProgress = false;});
+                                setState((){isProgress = false; s1 = s2 = s3 = s4 = "";});
                               }
                             },
                           ),

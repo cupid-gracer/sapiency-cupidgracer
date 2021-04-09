@@ -43,7 +43,7 @@ class InputPhoneScreen extends StatelessWidget with SapiencyInputDecoration {
               .resendEmailOrPhone(
             context: ctx,
             type: "phone",
-            value: email,
+            value: data["phone"],
             nickname: nickname,
           );
           if(f)

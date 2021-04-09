@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:sapiency/providers/auth.dart';
 import 'package:sapiency/configs/theme.dart';
 import 'package:sapiency/mixins/input_decoration.dart';
 import 'package:sapiency/mixins/box_decoration.dart';
 import 'package:sapiency/configs/routes.dart';
 
-class ConfirmPhoneScreen extends StatelessWidget with SapiencyInputDecoration {
+class ConfirmPhoneScreen extends StatefulWidget
+{
+  @override
+  _confirmPhoneScreenState createState() => _confirmPhoneScreenState();
+}
+
+class _confirmPhoneScreenState extends State<ConfirmPhoneScreen>  with SapiencyInputDecoration {
+
+  bool isProgress = false;
+
   String s1 = "", s2 = "", s3 = "", s4 = "";
   Image getHeaderImage() => Image.asset(
         "assets/images/newsletter-dev.png",
@@ -57,6 +68,8 @@ class ConfirmPhoneScreen extends StatelessWidget with SapiencyInputDecoration {
     s1 = s2 = s3 = s4 = "";
 
     Map<String, String> map = ModalRoute.of(context).settings.arguments;
+    String email = map['email'];
+    String nickname = map['nickname'];
     String phone = map['phone_number'];
 
     return Scaffold(
@@ -112,13 +125,16 @@ class ConfirmPhoneScreen extends StatelessWidget with SapiencyInputDecoration {
                           child: RaisedButton(
                             textColor: Colors.white,
                             color: SapiencyTheme.primaryColor,
-                            child: Text("Confirm my number"),
-                            onPressed: () {
+                            child: isProgress? CircularProgressIndicator(backgroundColor: Colors.white) :Text("Confirm my number"),
+                            onPressed: () async{
                               String str_confirm = s1 + s2 + s3 + s4;
                               print("confirm phone code : $str_confirm");
-                              if (str_confirm.length == 4)
-                                Navigator.of(context).pushNamed(Routes.PIN_ROUTE);
-                              // Provider.of<AuthProvider>(ctx, listen: false).signupByEmail(email: data['email'], password: data['password'], nickname: data['nickname'],);
+                              if (str_confirm.length == 4){
+                                setState((){isProgress = true;});
+                              bool f = await Provider.of<AuthProvider>(context, listen: false).ConfirmEmailOrPhone(context: context, type: "phone", value: phone, nickname: nickname, pin: str_confirm);
+                                if(f) Navigator.of(context).pushNamed(Routes.PIN_ROUTE, arguments: {"email" : email});
+                                setState((){isProgress = false;});
+                              }
                             },
                           ),
                         ),
@@ -136,7 +152,14 @@ class ConfirmPhoneScreen extends StatelessWidget with SapiencyInputDecoration {
                               textColor: SapiencyTheme.primaryColor,
                               color: Colors.white,
                               child: Text("Resend"),
-                              onPressed: () {
+                              onPressed: () async{
+                                await Provider.of<AuthProvider>(context,listen: false)
+                                    .resendEmailOrPhone(
+                                  context: context,
+                                  type: "phone",
+                                  value: email,
+                                  nickname: nickname,
+                                );
                                 // Provider.of<AuthProvider>(ctx, listen: false).signupByEmail(email: data['email'], password: data['password'], nickname: data['nickname'],);
                                 // Navigator.of(context).pushNamed(Routes.CONFIRM_EMAIL);
                               },

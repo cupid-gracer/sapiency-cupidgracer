@@ -304,6 +304,7 @@ class _agreeModalState extends State<AgreeModal> {
                       color: SapiencyTheme.primaryColor,
                       child: isProgress?  CircularProgressIndicator(backgroundColor: Colors.white) :Text("I've read and agree"),
                       onPressed: () async {
+                        if(isProgress) return;
                         setState((){isProgress = true;});
                         bool f = await Provider.of<AuthProvider>(ctx, listen: false)
                             .signupByEmail(

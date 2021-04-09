@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
+import 'package:flutter/services.dart';
+import 'package:device_info/device_info.dart';
+import 'package:screen_loader/screen_loader.dart';
 import 'package:provider/provider.dart';
 import 'package:sapiency/providers/auth.dart';
 import 'package:sapiency/models/user.dart';
@@ -20,13 +23,16 @@ class ConfirmPinScreen extends StatefulWidget {
 }
 
 class _ConfirmPinScreenState extends State<ConfirmPinScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, ScreenLoader<ConfirmPinScreen> {
+
   AnimationController controller;
   Animation<double> animation;
   CircleUIConfig circleUIConfig;
   KeyboardUIConfig keyboardUIConfig;
   String enteredPIN = '';
   int PIN_length = 4;
+  String email;
+  String nickname;
   String passcode;
   User user;
   @override
@@ -34,6 +40,8 @@ class _ConfirmPinScreenState extends State<ConfirmPinScreen>
     super.initState();
     user = Provider.of<AuthProvider>(context, listen: false).user;
 
+    email = "";
+    nickname = "";
     passcode = "";
     circleUIConfig = CircleUIConfig(
         borderColor: Colors.white30, fillColor: Colors.white30, circleSize: 30);
@@ -69,11 +77,22 @@ class _ConfirmPinScreenState extends State<ConfirmPinScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  loader() =>  CircularProgressIndicator(backgroundColor: Colors.white);
+
+
+  @override
+  loadingBgBlur() => 10.0;
+
+
+  @override
+  Widget screen(BuildContext context) {
     final __deviceSize = MediaQuery.of(context).size;
     final __theme = Theme.of(context);
     Map<String, String> map = ModalRoute.of(context).settings.arguments;
+    email = map['email'];
+    nickname = map['nickname'];
     passcode = map['pincode'];
+    print("email in confirm : $email");
 
     return Stack(
       children: [
@@ -163,29 +182,6 @@ class _ConfirmPinScreenState extends State<ConfirmPinScreen>
                       )
         )
       );
-
-      // list.add(
-      //   Container(
-      //       margin: EdgeInsets.all(8),
-      //       child: Row(
-      //         children: [
-      //           i < enteredPIN.length
-      //               ? Text(
-      //                   enteredPIN.substring(i, i + 1),
-      //                   style: TextStyle(fontSize: 30, color: Colors.white),
-      //                   textAlign: TextAlign.justify,
-      //                 )
-      //               : Circle(
-      //                   // filled: i < enteredPIN.length,
-      //                   filled: true,
-      //                   circleUIConfig: config,
-      //                   extraSize: extraSize,
-      //                 ),
-      //           SizedBox(width: i < PIN_length - 1 ? 60 : 0)
-      //         ],
-      //       )),
-      // )
-      ;
     }
     return list;
   }
@@ -210,31 +206,36 @@ class _ConfirmPinScreenState extends State<ConfirmPinScreen>
             ]),
       );
 
-  _onKeyboardButtonPressed(String text) {
+  _onKeyboardButtonPressed(String text) async{
     if(text == "face"){
       return;
     }else if(text == "del"){
       _onDeleteCancelButtonPressed();
       return;
     }
-    setState(() async{
+    setState(() {
       if (enteredPIN.length < PIN_length) {
         enteredPIN += text;
-        if (enteredPIN.length == PIN_length) {
-          if(passcode == enteredPIN){
-            var uuid = Uuid();
-            var v4 = uuid.v4();
-            await Provider.of<AuthProvider>(context, listen: false).RegisterPin(context:context, email: user.email, deviceId: v4, pin: passcode);
-            Navigator.of(context).pushNamed(Routes.LOGIN_ROUTE);
-          }
-          else
-          {
-            controller.forward();
-          }
-          // widget.passwordEnteredCallback(enteredPIN);
-        }
       }
     });
+    
+    if (enteredPIN.length == PIN_length) {
+      String strPin = enteredPIN;
+      if(passcode == strPin){
+        String device_id = await getDeviceId();
+        bool f = false;
+        await this.performFuture(()async { f = await Provider.of<AuthProvider>(context, listen: false).RegisterPin(context:context, email: email, deviceId: device_id, pin: passcode);});
+        print("email in confirm : $email");
+        // bool f = await Provider.of<AuthProvider>(context, listen: false).RegisterPin(context:context, email: email, deviceId: device_id, pin: passcode);
+        if(f)Navigator.of(context).pushNamedAndRemoveUntil(Routes.LOGIN_ROUTE, (route) => false );
+        setState((){enteredPIN = "";});
+      }
+      else
+      {
+        controller.forward();
+      }
+      // widget.passwordEnteredCallback(enteredPIN);
+    }
   }
 
   _onDeleteCancelButtonPressed() {
@@ -249,6 +250,29 @@ class _ConfirmPinScreenState extends State<ConfirmPinScreen>
     }
   }
 
+  static Future<String> getDeviceId() async {
+    String deviceName;
+    String deviceVersion;
+    String identifier;
+    final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+    try {
+      if (Platform.isAndroid) {
+        var build = await deviceInfoPlugin.androidInfo;
+        deviceName = build.model;
+        deviceVersion = build.version.toString();
+        identifier = build.androidId; //UUID for Android
+      } else if (Platform.isIOS) {
+        var data = await deviceInfoPlugin.iosInfo;
+        deviceName = data.name;
+        deviceVersion = data.systemVersion;
+        identifier = data.identifierForVendor; //UUID for iOS
+      }
+    } on PlatformException {
+      print('Failed to get platform version');
+    }
+
+    return identifier;
+  }
   Widget _buildDeleteButton() {
     return Container(
       child: CupertinoButton(

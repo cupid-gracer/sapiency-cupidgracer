@@ -183,13 +183,15 @@ class _BaseFormState extends State<BaseForm> {
   }
 
   Future<void> _submit() async {
-    setState((){isProcessing = true;});
-    print("submit start");
+    if(isProcessing)return;
+    
     if (!_formKey.currentState.validate())
       return;
 
     _formKey.currentState.save();
-
+    
+    setState((){isProcessing = true;});
+    print("submit start");
     try {
       if (widget.onSubmit != null)
        await widget.onSubmit(_data, context);
