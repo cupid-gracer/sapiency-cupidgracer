@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sapiency/configs/theme.dart';
 
 class StandardButton extends StatelessWidget {
-  final String label;
+  final Widget label;
   final double width;
   final Function onPressed;
   final EdgeInsetsGeometry padding;
@@ -23,7 +23,7 @@ class StandardButton extends StatelessWidget {
         child: RaisedButton(
           textColor: getTextColor(),
           color: getBackgroundColor(),
-          child: Text(label),
+          child: label,
           onPressed: onPressed,
         )
       )

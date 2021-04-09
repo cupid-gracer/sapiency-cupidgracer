@@ -39,6 +39,8 @@ class _BaseFormState extends State<BaseForm> {
   final Map<String, Widget> _fields = {};
   final List<String> _orders = [];
 
+  bool isProcessing = false;
+
   @override
   void initState() {
     super.initState();
@@ -171,7 +173,7 @@ class _BaseFormState extends State<BaseForm> {
             children: _fields.entries.map((e) => e.value).toList()
               ..add(SizedBox(height: 20))
               ..add(widget.submit ?? SubmitButton(
-                label: widget.submitText,
+                label: isProcessing? CircularProgressIndicator(backgroundColor: Colors.white):Text(widget.submitText),
                 onPressed: () => _submit(),
                 padding: EdgeInsets.only(bottom: 20),
               ))
@@ -181,6 +183,8 @@ class _BaseFormState extends State<BaseForm> {
   }
 
   Future<void> _submit() async {
+    setState((){isProcessing = true;});
+    print("submit start");
     if (!_formKey.currentState.validate())
       return;
 
@@ -188,13 +192,18 @@ class _BaseFormState extends State<BaseForm> {
 
     try {
       if (widget.onSubmit != null)
-        widget.onSubmit(_data, context);
+       await widget.onSubmit(_data, context);
+    setState((){isProcessing = false;});
     } catch (error) {
+      setState((){isProcessing = false;});
       if (widget.onSubmitError != null)
         widget.onSubmitError(error);
       else
         throw error;
     }
+    print("submit end");
+    setState((){isProcessing = false;});
+
   }
 
   bool _isLastField(String key) =>

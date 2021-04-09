@@ -72,7 +72,8 @@ class HttpService {
         }
         // _alert(title: "Failed", description: response.reasonPhrase, alertType: CustomDialogType.Error);
         _alert(title: "Failed", description: des, alertType: CustomDialogType.Error);
-        throw HttpException(response.statusCode, response.reasonPhrase);
+        return {"result":"failed"};
+        // throw HttpException(response.statusCode, response.reasonPhrase);
       }
 
       Map<String, dynamic> __responseBody = json.decode(response.body);
@@ -81,10 +82,12 @@ class HttpService {
 
       if (!__responseBody.containsKey("result")) {
         _alert(title: "Failed", description: "Communication error", alertType: CustomDialogType.Error);
-        throw UnexpectedAnswerException();
+        return {"result": "failed"};
+        // throw UnexpectedAnswerException();
       } else if (__responseBody["result"] == "fail") {
         _alert(title: "Failed", description: __responseBody["error"], alertType: CustomDialogType.Error);
-        throw FailureResponseException(__responseBody["code"], __responseBody["error"]);
+        return __responseBody;
+        // throw FailureResponseException(__responseBody["code"], __responseBody["error"]);
       }
 
       return __responseBody;

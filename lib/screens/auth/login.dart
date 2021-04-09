@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:screen_loader/screen_loader.dart';
 import 'package:sapiency/forms/base_form.dart';
 import 'package:sapiency/models/oauth.dart';
 import 'package:sapiency/providers/auth.dart';
@@ -13,7 +14,10 @@ import 'package:sapiency/widgets/buttons/standard.dart';
 import 'package:sapiency/widgets/forms/input_form_field.dart';
 import 'package:sapiency/widgets/forms/password_form_field.dart';
 
-class LoginScreen extends SignUpScreenTheme {
+class LoginScreen extends SignUpScreenTheme  {
+
+  bool isLoading = false;
+
   @override
   String getTitleText() => 'Welcome back!';
 
@@ -33,16 +37,24 @@ class LoginScreen extends SignUpScreenTheme {
               PasswordFormField(labelText: 'Password', showForgotPassword: true)
         },
         onSubmit: (data, ctx) async {
+          
+          // super.perform(()=>Provider.of<AuthProvider>(ctx, listen: false)
+          //     .loginByEmail(context: ctx, email: data['email'], password: data['password']));
+          // super.perform(test(ctx, data['email'], data['password']));
+          // _SignUpScreenThemeState()
+
+          // this.perform(func);
           bool f = await Provider.of<AuthProvider>(ctx, listen: false)
               .loginByEmail(context: ctx, email: data['email'], password: data['password']);
-          if (f)
-            Navigator.of(ctx).pushNamedAndRemoveUntil(
-                Routes.MAIN_HOME_ROUTE, (route) => false);
+          // if (f)
+          //   Navigator.of(ctx).pushNamedAndRemoveUntil(
+          //       Routes.MAIN_HOME_ROUTE, (route) => false);
         },
         onSubmitError: (error) {
           print(error);
         },
       );
+
 
   @override
   Map<String, Widget> getBottomSections(BuildContext context) => {
@@ -63,7 +75,7 @@ class LoginScreen extends SignUpScreenTheme {
         'Don\'t you have an account?': Padding(
             padding: EdgeInsets.only(top: 10),
             child: StandardButton(
-              label: 'Create a new account',
+              label: Text('Create a new account'),
               onPressed: () {
                 Navigator.of(context).pushNamed(Routes.SIGNUP_ROUTE);
               },

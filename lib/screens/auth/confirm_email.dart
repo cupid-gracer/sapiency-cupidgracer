@@ -7,7 +7,16 @@ import 'package:sapiency/mixins/input_decoration.dart';
 import 'package:sapiency/mixins/box_decoration.dart';
 import 'package:sapiency/configs/routes.dart';
 
-class ConfirmEmailScreen extends StatelessWidget with SapiencyInputDecoration {
+class ConfirmEmailScreen extends StatefulWidget
+{
+  @override
+  _confirmEmailScreenState createState() => _confirmEmailScreenState();
+}
+
+class _confirmEmailScreenState extends State<ConfirmEmailScreen> with SapiencyInputDecoration {
+  
+  bool isProgress = false;
+
   String s1 = "", s2 = "", s3 = "", s4 = "";
   Image getHeaderImage() => Image.asset(
         "assets/images/newsletter-dev.png",
@@ -111,14 +120,16 @@ class ConfirmEmailScreen extends StatelessWidget with SapiencyInputDecoration {
                         SizedBox(
                           width: double.infinity,
                           child: RaisedButton(
+                            
                             textColor: Colors.white,
                             color: SapiencyTheme.primaryColor,
-                            child: Text("Continue"),
+                            child: isProgress? CircularProgressIndicator(backgroundColor: Colors.white) :Text("Continue"),
                             onPressed: () async {
                               String str_confirm = s1 + s2 + s3 + s4;
                               print("confirm code : $str_confirm");
-                              if (str_confirm.length == 4) {
-                                await Provider.of<AuthProvider>(context,
+                              if (str_confirm.length == 4 && !isProgress) {
+                                setState((){isProgress = true;});
+                                bool f = await Provider.of<AuthProvider>(context,
                                         listen: false)
                                     .ConfirmEmailOrPhone(
                                   context: context,
@@ -127,8 +138,10 @@ class ConfirmEmailScreen extends StatelessWidget with SapiencyInputDecoration {
                                   pin:str_confirm,
                                   nickname: nickname,
                                 );
+                                if(f)
                                 Navigator.of(context)
-                                    .pushNamed(Routes.INPUT_PHONE_ROUTE);
+                                    .pushNamed(Routes.INPUT_PHONE_ROUTE,arguments: {"email": email,"nickname": nickname});
+                                setState((){isProgress = false;});
                               }
                             },
                           ),

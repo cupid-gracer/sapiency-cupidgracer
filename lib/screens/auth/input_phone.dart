@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:sapiency/providers/auth.dart';
 import 'package:sapiency/configs/theme.dart';
 import 'package:sapiency/mixins/input_decoration.dart';
 import 'package:sapiency/mixins/box_decoration.dart';
@@ -23,7 +25,6 @@ class InputPhoneScreen extends StatelessWidget with SapiencyInputDecoration {
     return "Please verify your phone number";
   }
 
-  @override
   Widget getForm() => BaseForm(
         submitText: 'Continue',
         fields: {
@@ -33,9 +34,20 @@ class InputPhoneScreen extends StatelessWidget with SapiencyInputDecoration {
             keyboardType: TextInputType.phone,
           ),
         },
-        onSubmit: (data, ctx) {
+        onSubmit: (data, ctx) async {
+          Map<String, String> map = ModalRoute.of(ctx).settings.arguments;
+          String email = map['email'];
+          String nickname = map['nickname'];
           print("phone=====    ${data["phone"]}");
-          Navigator.pushNamed(ctx, Routes.CONFIRM_PHONE, arguments: {'phone_number': data["phone"],});
+          bool f = await Provider.of<AuthProvider>(ctx,listen: false)
+              .resendEmailOrPhone(
+            context: ctx,
+            type: "phone",
+            value: email,
+            nickname: nickname,
+          );
+          if(f)
+          Navigator.pushNamed(ctx, Routes.CONFIRM_PHONE, arguments: {"email" : email, "nickname" : nickname , 'phone_number': data["phone"],});
           // Provider.of<AuthProvider>(ctx, listen: false).loginByEmail(email: data['email'], password: data['password']);
         },
         onSubmitError: (error) {
@@ -93,42 +105,6 @@ class InputPhoneScreen extends StatelessWidget with SapiencyInputDecoration {
                       ],
                     ),
                   ),
-                  // Container(
-                  //   child: Column(
-                  //     children: [
-                  //       SizedBox(height: __deviceSize.height - 250,),
-                  //       // Expanded(child: Container()),
-                  //       Container(
-                  //         height: 70,
-                  //         decoration: standardBoxTipDecoration(),
-                  //         child: Row(
-                  //           children: [
-                  //             Expanded(
-                  //                 flex: 1,
-                  //                 child: Container(
-                  //                   margin: EdgeInsets.only(bottom: 20.0),
-                  //                   child: Image.asset(
-                  //                     "assets/images/bulb.png",
-                  //                     width: 50,
-                  //                     height: 50,
-                  //                   ),
-                  //                 )),
-                  //             SizedBox(
-                  //               width: 5,
-                  //             ),
-                  //             Expanded(
-                  //               flex: 9,
-                  //               child: Text(
-                  //                 "In order to proceed, you need to confirm your email address",
-                  //                 style: __theme.textTheme.subtitle1,
-                  //               ),
-                  //             )
-                  //           ],
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // )
                 ],
               )),
         ));

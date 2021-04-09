@@ -30,9 +30,9 @@ class PinScreen extends StatefulWidget {
 }
 
 class _PinScreenState extends State<PinScreen>
-    with SingleTickerProviderStateMixin 
-    //  with ScreenLoader<PinScreen>  
-     {
+    // with SingleTickerProviderStateMixin
+    with
+        ScreenLoader<PinScreen> {
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   Map<String, dynamic> _deviceData = <String, dynamic>{};
 
@@ -65,34 +65,34 @@ class _PinScreenState extends State<PinScreen>
 
     // controller = AnimationController(
     //     duration: const Duration(milliseconds: 500), vsync: this);
-    final Animation curve =
-        CurvedAnimation(parent: controller, curve: ShakeCurve());
-    animation = Tween(begin: 0.0, end: 10.0).animate(curve as Animation<double>)
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          setState(() {
-            enteredPIN = '';
-            controller.value = 0;
-          });
-        }
-      })
-      ..addListener(() {
-        setState(() {
-          // the animation object’s value is the changed state
-        });
-      });
+    // final Animation curve =
+    //     CurvedAnimation(parent: controller, curve: ShakeCurve());
+    // animation = Tween(begin: 0.0, end: 10.0).animate(curve as Animation<double>)
+    //   ..addStatusListener((status) {
+    //     if (status == AnimationStatus.completed) {
+    //       setState(() {
+    //         enteredPIN = '';
+    //         controller.value = 0;
+    //       });
+    //     }
+    //   })
+    //   ..addListener(() {
+    //     setState(() {
+    //       // the animation object’s value is the changed state
+    //     });
+    //   });
   }
 
   @override
   loader() {
-    return AlertDialog(
-      title: Text('Wait.. Loading data..'),
-    );
+    return  CircularProgressIndicator(backgroundColor: Colors.white);
+    // return AlertDialog(
+    //   title: Text('Wait.. Loading data..'),
+    // );
   }
 
   @override
   loadingBgBlur() => 10.0;
-
 
   static Future<String> getDeviceId() async {
     String deviceName;
@@ -119,7 +119,7 @@ class _PinScreenState extends State<PinScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget screen(BuildContext context) {
     return Stack(
       children: [
         Container(
@@ -180,7 +180,7 @@ class _PinScreenState extends State<PinScreen>
   List<Widget> _buildCircles() {
     var list = <Widget>[];
     var config = circleUIConfig;
-    var extraSize = animation.value;
+    // var extraSize = animation.value;
     for (int i = 0; i < PIN_length; i++) {
       list.add(Expanded(
           child: i < enteredPIN.length
@@ -196,7 +196,7 @@ class _PinScreenState extends State<PinScreen>
                   // filled: i < enteredPIN.length,
                   filled: true,
                   circleUIConfig: config,
-                  extraSize: extraSize,
+                  // extraSize: extraSize,
                 )));
     }
     return list;
@@ -239,21 +239,21 @@ class _PinScreenState extends State<PinScreen>
       // await this.performFuture(__test(str));
       // enteredPIN = "";
       String device_id = await getDeviceId();
-      widget.type
-          ? await Provider.of<AuthProvider>(context, listen: false).loginByPin(
-              context: context, email: user.email, deviceId: device_id, pin: str)
-          : Navigator.of(context)
-              .pushNamed(Routes.CONFIRM_PIN_ROUTE, arguments: {"pincode": str});
+      if (widget.type) {
+        await this.performFuture(() =>
+            Provider.of<AuthProvider>(context, listen: false).loginByPin(
+                context: context,
+                email: user.email,
+                deviceId: device_id,
+                pin: str));
+      } else {
+        Navigator.of(context)
+            .pushNamed(Routes.CONFIRM_PIN_ROUTE, arguments: {"pincode": str});
+      }
       // widget.passwordEnteredCallback(enteredPIN);
     }
   }
 
-  __test(String str) async {
-    String device_id = await getDeviceId();
-      print("email ${user.email}, deviceId: $device_id, pin: $str");
-await Provider.of<AuthProvider>(context, listen: false).loginByPin(
-              context: context, email: user.email, deviceId: device_id, pin: str);
-  }
 
   _onDeleteCancelButtonPressed() {
     if (enteredPIN.length > 0) {
@@ -297,5 +297,4 @@ await Provider.of<AuthProvider>(context, listen: false).loginByPin(
     enteredPIN = "";
     super.dispose();
   }
-
 }

@@ -45,6 +45,7 @@ class SignupScreen extends SignUpScreenTheme {
           showModalBottomSheet<void>(
             context: ctx,
             builder: (ctx) {
+              return AgreeModal(email: data["email"], nickname: data["nickname"], password: data["password"],);
               return agreeModal(data, ctx);
             },
           );
@@ -127,12 +128,12 @@ class SignupScreen extends SignUpScreenTheme {
                         ),
                         new TextSpan(
                           text: 'terms of service',
-                          style:
-                              new TextStyle(color: SapiencyTheme.primaryColor, fontWeight: FontWeight.bold),
+                          style: new TextStyle(
+                              color: SapiencyTheme.primaryColor,
+                              fontWeight: FontWeight.bold),
                           recognizer: new TapGestureRecognizer()
                             ..onTap = () {
-                              launch(
-                                  'https://www.google.com');
+                              launch('https://www.google.com');
                             },
                         ),
                       ],
@@ -150,12 +151,12 @@ class SignupScreen extends SignUpScreenTheme {
                         ),
                         new TextSpan(
                           text: 'privacy policy',
-                          style:
-                              new TextStyle(color: SapiencyTheme.primaryColor, fontWeight: FontWeight.bold),
+                          style: new TextStyle(
+                              color: SapiencyTheme.primaryColor,
+                              fontWeight: FontWeight.bold),
                           recognizer: new TapGestureRecognizer()
                             ..onTap = () {
-                              launch(
-                                  'https://www.google.com');
+                              launch('https://www.google.com');
                             },
                         ),
                       ],
@@ -170,9 +171,157 @@ class SignupScreen extends SignUpScreenTheme {
                       textColor: Colors.white,
                       color: SapiencyTheme.primaryColor,
                       child: Text("I've read and agree"),
-                      onPressed: () async{
-                        await Provider.of<AuthProvider>(ctx, listen: false).signupByEmail(context: ctx, email: data['email'], password: data['password'], nickname: data['nickname'],);
-                        Navigator.of(ctx).popAndPushNamed(Routes.CONFIRM_EMAIL, arguments: {"email": data['email'].toString(), "nickname": data['nickname'].toString()});
+                      onPressed: () async {
+                        await Provider.of<AuthProvider>(ctx, listen: false)
+                            .signupByEmail(
+                          context: ctx,
+                          email: data['email'],
+                          password: data['password'],
+                          nickname: data['nickname'],
+                        );
+                        Navigator.of(ctx).popAndPushNamed(Routes.CONFIRM_EMAIL,
+                            arguments: {
+                              "email": data['email'].toString(),
+                              "nickname": data['nickname'].toString()
+                            });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            )));
+  }
+}
+
+class AgreeModal extends StatefulWidget {
+  final String email;
+  final String password;
+  final String nickname;
+
+  AgreeModal({
+    Key key,
+    this.email,
+    this.password,
+    this.nickname,
+  }) : super(key: key);
+
+  @override
+  _agreeModalState createState() => _agreeModalState();
+}
+
+class _agreeModalState extends State<AgreeModal> {
+  bool isProgress = false;
+  @override
+  Widget build(BuildContext ctx) {
+    final __theme = Theme.of(ctx);
+    return Container(
+        color: Color(0xFF737373),
+        height: 400,
+        child: Container(
+            decoration: new BoxDecoration(
+                color: Colors.white,
+                borderRadius: new BorderRadius.only(
+                    topLeft: const Radius.circular(20.0),
+                    topRight: const Radius.circular(20.0))),
+            child: Padding(
+              padding: EdgeInsets.all(30),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset(
+                    AppImages.privacy,
+                    width: 50,
+                    height: 50,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Sapiency terms of service and privacy policy",
+                    style: __theme.textTheme.headline6,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Please read and agree to the Terms of service and our Privacy Policy",
+                    style: __theme.textTheme.bodyText1,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  RichText(
+                    text: new TextSpan(
+                      children: [
+                        new TextSpan(
+                          text: 'Read our ',
+                          style: __theme.textTheme.bodyText1,
+                        ),
+                        new TextSpan(
+                          text: 'terms of service',
+                          style: new TextStyle(
+                              color: SapiencyTheme.primaryColor,
+                              fontWeight: FontWeight.bold),
+                          recognizer: new TapGestureRecognizer()
+                            ..onTap = () {
+                              launch('https://www.google.com');
+                            },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  RichText(
+                    text: new TextSpan(
+                      children: [
+                        new TextSpan(
+                          text: 'Read our ',
+                          style: __theme.textTheme.bodyText1,
+                        ),
+                        new TextSpan(
+                          text: 'privacy policy',
+                          style: new TextStyle(
+                              color: SapiencyTheme.primaryColor,
+                              fontWeight: FontWeight.bold),
+                          recognizer: new TapGestureRecognizer()
+                            ..onTap = () {
+                              launch('https://www.google.com');
+                            },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: RaisedButton(
+                      textColor: Colors.white,
+                      color: SapiencyTheme.primaryColor,
+                      child: isProgress?  CircularProgressIndicator(backgroundColor: Colors.white) :Text("I've read and agree"),
+                      onPressed: () async {
+                        setState((){isProgress = true;});
+                        bool f = await Provider.of<AuthProvider>(ctx, listen: false)
+                            .signupByEmail(
+                          context: ctx,
+                          email: widget.email,
+                          password: widget.password,
+                          nickname: widget.nickname,
+                        );
+
+                        if(f)
+                        Navigator.of(ctx).popAndPushNamed(Routes.CONFIRM_EMAIL,
+                            arguments: {
+                              "email": widget.email,
+                              "nickname": widget.nickname
+                            });
+
+                        setState((){isProgress = false;});
+
                       },
                     ),
                   ),
