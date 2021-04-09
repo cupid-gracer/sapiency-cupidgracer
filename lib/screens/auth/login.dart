@@ -34,7 +34,7 @@ class LoginScreen extends SignUpScreenTheme {
         },
         onSubmit: (data, ctx) async {
           bool f = await Provider.of<AuthProvider>(ctx, listen: false)
-              .loginByEmail(email: data['email'], password: data['password']);
+              .loginByEmail(context: ctx, email: data['email'], password: data['password']);
           if (f)
             Navigator.of(ctx).pushNamedAndRemoveUntil(
                 Routes.MAIN_HOME_ROUTE, (route) => false);

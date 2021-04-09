@@ -2,6 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
+import 'package:provider/provider.dart';
+import 'package:sapiency/providers/auth.dart';
+import 'package:sapiency/models/user.dart';
 import 'package:sapiency/configs/images.dart';
 import 'package:passcode_screen/circle.dart';
 import 'package:sapiency/widgets/pin/keyboard.dart';
@@ -24,9 +28,12 @@ class _ConfirmPinScreenState extends State<ConfirmPinScreen>
   String enteredPIN = '';
   int PIN_length = 4;
   String passcode;
+  User user;
   @override
   initState() {
     super.initState();
+    user = Provider.of<AuthProvider>(context, listen: false).user;
+
     passcode = "";
     circleUIConfig = CircleUIConfig(
         borderColor: Colors.white30, fillColor: Colors.white30, circleSize: 30);
@@ -210,11 +217,14 @@ class _ConfirmPinScreenState extends State<ConfirmPinScreen>
       _onDeleteCancelButtonPressed();
       return;
     }
-    setState(() {
+    setState(() async{
       if (enteredPIN.length < PIN_length) {
         enteredPIN += text;
         if (enteredPIN.length == PIN_length) {
           if(passcode == enteredPIN){
+            var uuid = Uuid();
+            var v4 = uuid.v4();
+            await Provider.of<AuthProvider>(context, listen: false).RegisterPin(context:context, email: user.email, deviceId: v4, pin: passcode);
             Navigator.of(context).pushNamed(Routes.LOGIN_ROUTE);
           }
           else

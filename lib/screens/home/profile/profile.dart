@@ -27,9 +27,9 @@ class ProfileScreen extends StatelessWidget {
         title: Text("John doe"),
         centerTitle: true,
         actions: [
-          IconButton(
-              icon: Image(image: AssetImage(AppImages.notify_bell)),
-              onPressed: () {})
+          // IconButton(
+          //     icon: Image(image: AssetImage(AppImages.notify_bell)),
+          //     onPressed: () {})
         ],
         elevation: 1.0,
       ),
@@ -60,7 +60,7 @@ class ProfileScreen extends StatelessWidget {
     return Expanded(
         // child: SingleChildScrollView(
             child: DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
@@ -68,7 +68,7 @@ class ProfileScreen extends StatelessWidget {
           bottom: TabBar(
             tabs: [
               Tab( text: "Home",),
-              Tab( text: "Giveaways",),
+              // Tab( text: "Giveaways",),
               Tab( text: "Holders",),
             ],
           ),
@@ -76,7 +76,7 @@ class ProfileScreen extends StatelessWidget {
         body: TabBarView(
           children: [
             ProfileHomeWidget(),
-            Icon(Icons.home),
+            // Icon(Icons.home),
             // Icon(Icons.sentiment_satisfied_outlined),
             // Icon(Icons.shopping_cart_outlined),
             ProfileHolersWidget(),

@@ -1,31 +1,54 @@
 import 'dart:async';
 
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:device_info/device_info.dart';
+import 'package:screen_loader/screen_loader.dart';
+import 'package:provider/provider.dart';
+import 'package:sapiency/providers/auth.dart';
+import 'package:sapiency/models/user.dart';
 import 'package:sapiency/configs/images.dart';
 import 'package:sapiency/configs/routes.dart';
 import 'package:passcode_screen/circle.dart';
-import 'package:sapiency/widgets/pin/keyboard.dart';
 import 'package:passcode_screen/shake_curve.dart';
+import 'package:sapiency/widgets/pin/keyboard.dart';
 
 typedef PasswordEnteredCallback = void Function(String text);
 
 class PinScreen extends StatefulWidget {
+  /**
+   * type:  true => login pin widget, false => create new pin
+   */
+  final bool type;
+
+  const PinScreen({Key key, this.type}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _PinScreenState();
 }
 
 class _PinScreenState extends State<PinScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin 
+    //  with ScreenLoader<PinScreen>  
+     {
+  static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  Map<String, dynamic> _deviceData = <String, dynamic>{};
+
   AnimationController controller;
   Animation<double> animation;
   CircleUIConfig circleUIConfig;
   KeyboardUIConfig keyboardUIConfig;
   String enteredPIN = '';
   int PIN_length = 4;
+  User user;
+
   @override
   initState() {
     super.initState();
+    user = Provider.of<AuthProvider>(context, listen: false).user;
+
     enteredPIN = "";
 
     circleUIConfig = CircleUIConfig(
@@ -40,8 +63,8 @@ class _PinScreenState extends State<PinScreen>
       // keyboardSize:Size(500,400)
     );
 
-    controller = AnimationController(
-        duration: const Duration(milliseconds: 500), vsync: this);
+    // controller = AnimationController(
+    //     duration: const Duration(milliseconds: 500), vsync: this);
     final Animation curve =
         CurvedAnimation(parent: controller, curve: ShakeCurve());
     animation = Tween(begin: 0.0, end: 10.0).animate(curve as Animation<double>)
@@ -61,6 +84,41 @@ class _PinScreenState extends State<PinScreen>
   }
 
   @override
+  loader() {
+    return AlertDialog(
+      title: Text('Wait.. Loading data..'),
+    );
+  }
+
+  @override
+  loadingBgBlur() => 10.0;
+
+
+  static Future<String> getDeviceId() async {
+    String deviceName;
+    String deviceVersion;
+    String identifier;
+    final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+    try {
+      if (Platform.isAndroid) {
+        var build = await deviceInfoPlugin.androidInfo;
+        deviceName = build.model;
+        deviceVersion = build.version.toString();
+        identifier = build.androidId; //UUID for Android
+      } else if (Platform.isIOS) {
+        var data = await deviceInfoPlugin.iosInfo;
+        deviceName = data.name;
+        deviceVersion = data.systemVersion;
+        identifier = data.identifierForVendor; //UUID for iOS
+      }
+    } on PlatformException {
+      print('Failed to get platform version');
+    }
+
+    return identifier;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
@@ -72,7 +130,8 @@ class _PinScreenState extends State<PinScreen>
             child: Container()),
         Scaffold(
           appBar: AppBar(
-            title: Text("Create your PIN",
+            title: Text(
+                widget.type ? "Signin with your PIN" : "Create your PIN",
                 style: TextStyle(color: Colors.white, fontSize: 23),
                 textAlign: TextAlign.center),
             backgroundColor: Colors.transparent,
@@ -88,7 +147,7 @@ class _PinScreenState extends State<PinScreen>
                 height: 70,
               ),
               Text(
-                "Type a new PIN",
+                widget.type ? "Type your pin" : "Type a new PIN",
                 style: TextStyle(color: Colors.white, fontSize: 18),
               ),
               SizedBox(
@@ -96,7 +155,7 @@ class _PinScreenState extends State<PinScreen>
               ),
               Container(
                 // margin: const EdgeInsets.only(top: 20),
-                padding: const EdgeInsets.only(left: 75, right:75),
+                padding: const EdgeInsets.only(left: 75, right: 75),
                 height: 60,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -106,8 +165,6 @@ class _PinScreenState extends State<PinScreen>
             ],
           ))),
         ),
-       
-      //  _buildKeyboard(),
         Positioned(
             child: Align(
           alignment: Alignment.bottomCenter,
@@ -116,11 +173,6 @@ class _PinScreenState extends State<PinScreen>
             child: _buildKeyboard(),
           ),
         )),
-        // Positioned(
-        //     child: Align(
-        //   alignment: Alignment.bottomCenter,
-        //   child: _buildDeleteButton(),
-        // )),
       ],
     );
   }
@@ -130,46 +182,22 @@ class _PinScreenState extends State<PinScreen>
     var config = circleUIConfig;
     var extraSize = animation.value;
     for (int i = 0; i < PIN_length; i++) {
-
-      list.add(
-        Expanded(child:
-        i < enteredPIN.length
-                    ? Text(
-                        enteredPIN.substring(i, i + 1),
-                        style: TextStyle(fontSize: 50, color: Colors.white, ),
-                        textAlign: TextAlign.center,
-                      ):
-                    Circle(
-                        // filled: i < enteredPIN.length,
-                        filled: true,
-                        circleUIConfig: config,
-                        extraSize: extraSize,
-                      )
-        )
-      );
-
-      // list.add(
-      //   Container(
-      //       margin: EdgeInsets.all(8),
-      //       child: Row(
-      //         children: [
-      //           i < enteredPIN.length
-      //               ? Text(
-      //                   enteredPIN.substring(i, i + 1),
-      //                   style: TextStyle(fontSize: 30, color: Colors.white),
-      //                   textAlign: TextAlign.justify,
-      //                 )
-      //               : Circle(
-      //                   // filled: i < enteredPIN.length,
-      //                   filled: true,
-      //                   circleUIConfig: config,
-      //                   extraSize: extraSize,
-      //                 ),
-      //           SizedBox(width: i < PIN_length - 1 ? 60 : 0)
-      //         ],
-      //       )),
-      // )
-      ;
+      list.add(Expanded(
+          child: i < enteredPIN.length
+              ? Text(
+                  enteredPIN.substring(i, i + 1),
+                  style: TextStyle(
+                    fontSize: 50,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                )
+              : Circle(
+                  // filled: i < enteredPIN.length,
+                  filled: true,
+                  circleUIConfig: config,
+                  extraSize: extraSize,
+                )));
     }
     return list;
   }
@@ -194,24 +222,37 @@ class _PinScreenState extends State<PinScreen>
             ]),
       );
 
-  _onKeyboardButtonPressed(String text) {
-    if(text == "face"){
+  _onKeyboardButtonPressed(String text) async {
+    if (text == "face") {
       return;
-    }else if(text == "del"){
+    } else if (text == "del") {
       _onDeleteCancelButtonPressed();
       return;
     }
     setState(() {
       if (enteredPIN.length < PIN_length) {
         enteredPIN += text;
-        if (enteredPIN.length == PIN_length) {
-          String str = enteredPIN;
-          enteredPIN = "";
-          Navigator.of(context).pushNamed(Routes.CONFIRM_PIN_ROUTE, arguments: {"pincode": str});
-          // widget.passwordEnteredCallback(enteredPIN);
-        }
       }
     });
+    if (enteredPIN.length == PIN_length) {
+      String str = enteredPIN;
+      // await this.performFuture(__test(str));
+      // enteredPIN = "";
+      String device_id = await getDeviceId();
+      widget.type
+          ? await Provider.of<AuthProvider>(context, listen: false).loginByPin(
+              context: context, email: user.email, deviceId: device_id, pin: str)
+          : Navigator.of(context)
+              .pushNamed(Routes.CONFIRM_PIN_ROUTE, arguments: {"pincode": str});
+      // widget.passwordEnteredCallback(enteredPIN);
+    }
+  }
+
+  __test(String str) async {
+    String device_id = await getDeviceId();
+      print("email ${user.email}, deviceId: $device_id, pin: $str");
+await Provider.of<AuthProvider>(context, listen: false).loginByPin(
+              context: context, email: user.email, deviceId: device_id, pin: str);
   }
 
   _onDeleteCancelButtonPressed() {
@@ -232,7 +273,7 @@ class _PinScreenState extends State<PinScreen>
         onPressed: _onDeleteCancelButtonPressed,
         child: Container(
             // margin: widget.keyboardUIConfig.digitInnerMargin,
-            child: enteredPIN.length != 0 
+            child: enteredPIN.length != 0
                 ? Icon(
                     Icons.arrow_back,
                     color: Colors.blue,
@@ -256,4 +297,5 @@ class _PinScreenState extends State<PinScreen>
     enteredPIN = "";
     super.dispose();
   }
+
 }

@@ -56,20 +56,20 @@ class SignupScreen extends SignUpScreenTheme {
 
   @override
   Map<String, Widget> getBottomSections(BuildContext context) => {
-        'Or use your favorite platform': Padding(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: OAuthServices.services
-                  .map((it) => SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: RaisedButton(
-                          padding: EdgeInsets.zero,
-                          child: Image.asset(it.icon),
-                          onPressed: () {})))
-                  .toList(),
-            )),
+        // 'Or use your favorite platform': Padding(
+        //     padding: const EdgeInsets.only(bottom: 20),
+        //     child: Row(
+        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //       children: OAuthServices.services
+        //           .map((it) => SizedBox(
+        //               width: 50,
+        //               height: 50,
+        //               child: RaisedButton(
+        //                   padding: EdgeInsets.zero,
+        //                   child: Image.asset(it.icon),
+        //                   onPressed: () {})))
+        //           .toList(),
+        //     )),
         'Already have an account?': FlatButton(
             minWidth: double.infinity,
             onPressed: () {
@@ -170,9 +170,9 @@ class SignupScreen extends SignUpScreenTheme {
                       textColor: Colors.white,
                       color: SapiencyTheme.primaryColor,
                       child: Text("I've read and agree"),
-                      onPressed: () {
-                        // Provider.of<AuthProvider>(ctx, listen: false).signupByEmail(email: data['email'], password: data['password'], nickname: data['nickname'],);
-                        Navigator.of(ctx).popAndPushNamed(Routes.CONFIRM_EMAIL);
+                      onPressed: () async{
+                        await Provider.of<AuthProvider>(ctx, listen: false).signupByEmail(context: ctx, email: data['email'], password: data['password'], nickname: data['nickname'],);
+                        Navigator.of(ctx).popAndPushNamed(Routes.CONFIRM_EMAIL, arguments: {"email": data['email'].toString(), "nickname": data['nickname'].toString()});
                       },
                     ),
                   ),

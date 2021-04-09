@@ -16,7 +16,7 @@ class MainScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen>  with WidgetsBindingObserver  {
   int selectedIndex = 0;
   List<Widget> listScreens = [
     HomeScreen(),
@@ -27,6 +27,7 @@ class _MainScreenState extends State<MainScreen> {
   bool isFirstRender = true;
   @override
   initState() {
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
    @override
@@ -40,7 +41,17 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('state = $state');
+    if(state == AppLifecycleState.resumed){
+      Provider.of<AuthProvider>(context,listen: false).changeResume();
+      // Navigator.of(context).pushNamed(Routes.PIN_ROUTE);
+    }
   }
 
   @override

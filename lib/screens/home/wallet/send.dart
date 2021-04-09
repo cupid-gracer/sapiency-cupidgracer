@@ -54,12 +54,15 @@ class SendScreen extends StatelessWidget {
                         "Send",
                         style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
-                      IconButton(
-                          iconSize: 18,
-                          padding: EdgeInsets.all(0),
-                          color: Colors.white,
-                          icon: Image(image: AssetImage(AppImages.notify_bell)),
-                          onPressed: () {}),
+                      Container(
+                        child: Text("                     ")
+                      )
+                      // IconButton(
+                      //     iconSize: 18,
+                      //     padding: EdgeInsets.all(0),
+                      //     color: Colors.white,
+                      //     icon: Image(image: AssetImage(AppImages.notify_bell)),
+                      //     onPressed: () {}),
                     ],
                   ),
                   SizedBox(

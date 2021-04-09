@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:sapiency/providers/auth.dart';
 import 'package:sapiency/configs/theme.dart';
 import 'package:sapiency/mixins/input_decoration.dart';
 import 'package:sapiency/mixins/box_decoration.dart';
@@ -53,6 +55,10 @@ class ConfirmEmailScreen extends StatelessWidget with SapiencyInputDecoration {
     final __deviceSize = MediaQuery.of(context).size;
     final __theme = Theme.of(context);
     final node = FocusScope.of(context);
+    Map<String, String> map1 = ModalRoute.of(context).settings.arguments;
+    String email = map1['email'];
+    String nickname = map1['nickname'];
+
     s1 = s2 = s3 = s4 = "";
     return Scaffold(
         backgroundColor: __theme.backgroundColor,
@@ -108,13 +114,22 @@ class ConfirmEmailScreen extends StatelessWidget with SapiencyInputDecoration {
                             textColor: Colors.white,
                             color: SapiencyTheme.primaryColor,
                             child: Text("Continue"),
-                            onPressed: () {
+                            onPressed: () async {
                               String str_confirm = s1 + s2 + s3 + s4;
                               print("confirm code : $str_confirm");
-                              if (str_confirm.length == 4)
+                              if (str_confirm.length == 4) {
+                                await Provider.of<AuthProvider>(context,
+                                        listen: false)
+                                    .ConfirmEmailOrPhone(
+                                  context: context,
+                                  type: "email",
+                                  value: email,
+                                  pin:str_confirm,
+                                  nickname: nickname,
+                                );
                                 Navigator.of(context)
                                     .pushNamed(Routes.INPUT_PHONE_ROUTE);
-                              // Provider.of<AuthProvider>(ctx, listen: false).signupByEmail(email: data['email'], password: data['password'], nickname: data['nickname'],);
+                              }
                             },
                           ),
                         ),
@@ -132,9 +147,14 @@ class ConfirmEmailScreen extends StatelessWidget with SapiencyInputDecoration {
                               textColor: SapiencyTheme.primaryColor,
                               color: Colors.white,
                               child: Text("Resend"),
-                              onPressed: () {
-                                // Provider.of<AuthProvider>(ctx, listen: false).signupByEmail(email: data['email'], password: data['password'], nickname: data['nickname'],);
-                                // Navigator.of(context).pushNamed(Routes.CONFIRM_EMAIL);
+                              onPressed: () async {
+                                await Provider.of<AuthProvider>(context,
+                                        listen: false)
+                                    .resendEmailOrPhone(
+                                        context: context,
+                                        type: "email",
+                                        value: email,
+                                        nickname: nickname);
                               },
                             ),
                           ],

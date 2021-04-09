@@ -61,12 +61,12 @@ class _WalletScreenState extends State<WalletScreen> {
                       ),
                     ],
                   ),
-                  IconButton(
-                      iconSize: 18,
-                      padding: EdgeInsets.all(0),
-                      color: Colors.white,
-                      icon: Image(image: AssetImage(AppImages.notify_bell)),
-                      onPressed: () => Navigator.of(context).pushNamed(Routes.NEWSFEED_ROUTE))
+                  // IconButton(
+                  //     iconSize: 18,
+                  //     padding: EdgeInsets.all(0),
+                  //     color: Colors.white,
+                  //     icon: Image(image: AssetImage(AppImages.notify_bell)),
+                  //     onPressed: () => Navigator.of(context).pushNamed(Routes.NEWSFEED_ROUTE))
                 ],
               ),
               Container(
@@ -124,9 +124,9 @@ class _WalletScreenState extends State<WalletScreen> {
                                 return sellModal(data, context);
                               },
                             )),
-                    _button(
-                        label: 'Deposit',
-                        icon: Image(image: AssetImage(AppImages.temple))),
+                    // _button(
+                    //     label: 'Deposit',
+                    //     icon: Image(image: AssetImage(AppImages.temple))),
                   ],
                 ),
               )

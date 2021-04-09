@@ -1,8 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:sapiency/configs/constants.dart';
 import 'package:sapiency/configs/api.dart';
+import 'package:sapiency/widgets/dialog/custom_dialog.dart';
 
 class HttpService {
   static final String _loggerName = "HttpRequest";
@@ -13,13 +17,16 @@ class HttpService {
     "DELETE": http.delete
   };
 
-  final Map<String, String> _headers = {"Content-Type": "application/json"};
+  // final Map<String, String> _headers = {"Content-Type": "application/json", "Content-Length": "35", "Host":"60"};
+  final Map<String, String> _headers = {"Content-Type": "application/json", "Accept": "application/json"};
   final Map<String, dynamic> _parameters = {};
   final Map<String, dynamic> _body = {};
+  BuildContext context;
   String _requestMethod;
   String _requestUrl;
 
-  HttpService(String apiUrl) {
+  HttpService(BuildContext context, String apiUrl) {
+    this.context = context;
     var splitIndex = apiUrl.indexOf(":");
 
     this._requestMethod = apiUrl.substring(0, splitIndex).toUpperCase();
@@ -46,14 +53,25 @@ class HttpService {
 
     try {
       final __requestUrl = _buildUrl();
-
-      log("[$__requestId] Request: $__requestUrl, Headers: $_headers, Body: $_body", name: _loggerName);
+      
 
       final http.Response response = _requestMethod == "GET"
           ? await _methodMatcher[_requestMethod](__requestUrl, headers: _headers)
           : await _methodMatcher[_requestMethod](__requestUrl, headers: _headers, body: json.encode(_body));
+          // : await _methodMatcher[_requestMethod](__requestUrl, headers: _headers, body: "{\"nickname\": \"cupid\", \"password\": \"password\", \"consents\": [\"marketing\", \"sapiency-1\"], \"language\": \"en\"}");
+
+      log("[$__requestId] Request: $__requestUrl, Method: $_requestMethod, Headers: $_headers, Body: ${json.encode(_body)}", name: _loggerName); 
 
       if (response.statusCode >= 400) {
+        String des = "";
+        switch(response.statusCode){
+          case 401: des = "Unauthorized!";  break;
+          case 404: des = "Server address is incorrect!";  break;
+          case 500: des = "Server internal error!";  break;
+          default: des = response.reasonPhrase;
+        }
+        // _alert(title: "Failed", description: response.reasonPhrase, alertType: CustomDialogType.Error);
+        _alert(title: "Failed", description: des, alertType: CustomDialogType.Error);
         throw HttpException(response.statusCode, response.reasonPhrase);
       }
 
@@ -62,18 +80,36 @@ class HttpService {
       log("[$__requestId] Response: $__responseBody", name: _loggerName);
 
       if (!__responseBody.containsKey("result")) {
+        _alert(title: "Failed", description: "Communication error", alertType: CustomDialogType.Error);
         throw UnexpectedAnswerException();
       } else if (__responseBody["result"] == "fail") {
+        _alert(title: "Failed", description: __responseBody["error"], alertType: CustomDialogType.Error);
         throw FailureResponseException(__responseBody["code"], __responseBody["error"]);
       }
 
       return __responseBody;
     } catch (error) {
       log("[$__requestId] Exception: $error", name: _loggerName, error: error);
-
+      
       throw error;
     }
   }
+
+  void _alert({String title, String description, CustomDialogType alertType}){
+    showDialog(
+        context: context,
+        builder: (context) {
+          return CustomDialog(
+            title: title,
+            buttonText: 'Okay',
+            description: description,
+            alertType: alertType,
+            onTap: (){}
+          );
+        },
+      );
+  }
+
   
   String _buildUrl() {
     return _getHostUrl() + _requestUrl.replaceAllMapped(RegExp(r"\{\w+\}"), (match) => (_parameters[match[0].replaceAll(RegExp(r'{|}'), '')] ?? "").toString());

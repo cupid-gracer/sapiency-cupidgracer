@@ -61,13 +61,13 @@ class WalletItem extends StatelessWidget {
               icon: Icons.send_rounded,
     //          onTap: () => _showSnackBar('More'),
             ),
-            IconSlideAction(
-              color: SapiencyTheme.primaryColor,
-              foregroundColor: Colors.white,
-              caption: 'Deposit',
-              icon: Icons.add_box_rounded,
-    //          onTap: () => _showSnackBar('Delete'),
-            ),
+    //         IconSlideAction(
+    //           color: SapiencyTheme.primaryColor,
+    //           foregroundColor: Colors.white,
+    //           caption: 'Deposit',
+    //           icon: Icons.add_box_rounded,
+    // //          onTap: () => _showSnackBar('Delete'),
+    //         ),
             IconSlideAction(
               color: SapiencyTheme.primaryColor,
               foregroundColor: Colors.white,
